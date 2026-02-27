@@ -133,7 +133,14 @@ export function Editor({ content, onUpdate, onEditorReady }: EditorProps) {
   }, [editor, onEditorReady]);
 
   return (
-    <div className="min-h-[70vh]">
+    <div
+      className="min-h-[70vh] cursor-text"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && editor) {
+          editor.commands.focus("end");
+        }
+      }}
+    >
       <EditorContent editor={editor} />
     </div>
   );

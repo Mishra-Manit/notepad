@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { DEBOUNCE_MS } from "@/lib/constants";
 import { readStorage, writeStorage } from "@/lib/storage";
@@ -36,8 +36,12 @@ function emitChange(next: NotepadData) {
 
 export function useLocalStorage() {
   const data = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const loaded = typeof window !== "undefined";
+  const [loaded, setLoaded] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
 
   const save = useCallback((content: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);

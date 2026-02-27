@@ -9,25 +9,31 @@ import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { clearStorage, getStorageSizeBytes } from "@/lib/storage";
 import { STORAGE_WARNING_BYTES } from "@/lib/constants";
-import { formatBytes } from "@/lib/utils";
 
 export function NotepadApp() {
   const { data, loaded, save } = useLocalStorage();
   const [editor, setEditor] = useState<TiptapEditor | null>(null);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [storageSize, setStorageSize] = useState(0);
+  const [charCount, setCharCount] = useState(0);
 
   const handleUpdate = useCallback(
     (html: string) => {
       save(html);
       setStorageSize(getStorageSizeBytes());
+      if (editor) {
+        setCharCount(editor.getText().length);
+      }
     },
-    [save]
+    [save, editor]
   );
 
   const handleEditorReady = useCallback((e: TiptapEditor | null) => {
     setEditor(e);
     setStorageSize(getStorageSizeBytes());
+    if (e) {
+      setCharCount(e.getText().length);
+    }
   }, []);
 
   const handleClearAll = useCallback(() => {
@@ -41,6 +47,7 @@ export function NotepadApp() {
     }
     setShowClearDialog(false);
     setStorageSize(0);
+    setCharCount(0);
   }, [editor]);
 
   useKeyboardShortcuts({ editor, onClearAll: handleClearAll });
@@ -61,7 +68,14 @@ export function NotepadApp() {
           shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.4)]
           transition-shadow duration-150"
       >
-        <div className="px-6 py-8 sm:px-8 sm:py-10">
+        <div
+          className="px-6 py-8 sm:px-8 sm:py-10 cursor-text"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && editor) {
+              editor.commands.focus("end");
+            }
+          }}
+        >
           <Editor
             content={data?.content ?? ""}
             onUpdate={handleUpdate}
@@ -70,14 +84,12 @@ export function NotepadApp() {
         </div>
       </div>
 
-      {/* Storage indicator */}
-      {storageSize > 0 && (
-        <div className="mt-4 flex items-center gap-3 text-xs text-muted">
-          <span>{formatBytes(storageSize)}</span>
-          <span className="text-border-hover">·</span>
-          <span className="text-muted/70">Saved</span>
-        </div>
-      )}
+      {/* Character count indicator */}
+      <div className="mt-4 flex items-center gap-3 text-xs text-muted">
+        <span>{charCount.toLocaleString()} chars</span>
+        <span className="text-border-hover">·</span>
+        <span className="text-muted/70">{charCount > 0 ? "Saved" : "Ready to save"}</span>
+      </div>
 
       {/* Storage warning */}
       {storageSize > STORAGE_WARNING_BYTES && (
