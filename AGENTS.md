@@ -22,52 +22,48 @@ The project should be built in this order. Each phase should be fully complete (
 
 **Owner**: First agent session
 
-- [ ] Set up `src/types/index.ts` with `Note` and `AppState` interfaces
-- [ ] Create `src/lib/constants.ts` (localStorage key, default values, size limits)
-- [ ] Create `src/lib/utils.ts` (ID generation, date formatting)
+- [ ] Set up `src/types/index.ts` with `NotepadData` interface
+- [ ] Create `src/lib/constants.ts` (localStorage key, size limits)
+- [ ] Create `src/lib/utils.ts` (date formatting helpers)
 - [ ] Create `src/lib/storage.ts` (localStorage read/write/size helpers)
 - [ ] Create `src/hooks/useLocalStorage.ts` (debounced persistence hook)
-- [ ] Create `src/hooks/useNotes.ts` (CRUD: create, read, update, delete notes)
 - [ ] Update `src/app/globals.css` with the dark theme palette and Tailwind v4 tokens
-- [ ] Install required dependencies (`lucide-react`, editor packages)
+- [ ] Install required dependencies (`lucide-react`, Tiptap packages)
 
 **Exit criteria**: Types compile, hooks are unit-testable, `globals.css` has correct theme tokens.
 
-### Phase 2: Layout Shell
+### Phase 2: Layout + Editor Shell
 
 **Owner**: Any agent (Phase 1 must be complete)
 
-- [ ] Create `src/components/NotepadApp.tsx` — top-level client component with state wiring
-- [ ] Create `src/components/Sidebar.tsx` — sidebar container (240px, dark surface, scrollable)
-- [ ] Create `src/components/NoteItem.tsx` — note entry in sidebar list
-- [ ] Create `src/components/SearchInput.tsx` — search/filter bar at top of sidebar
-- [ ] Update `src/app/page.tsx` to render `<NotepadApp />`
-- [ ] Update `src/app/layout.tsx` with correct metadata (title: "Notepad")
-
-**Exit criteria**: App renders with sidebar + main area. Notes can be created and selected. No editor yet — main area shows note title and raw content in a `<textarea>` placeholder.
-
-### Phase 3: Editor
-
-**Owner**: Any agent (Phase 2 must be complete)
-
+- [ ] Create `src/components/NotepadApp.tsx` — top-level client component, centered card layout, state wiring
 - [ ] Create `src/components/Editor.tsx` — Tiptap editor with markdown input rules
 - [ ] Create `src/components/Toolbar.tsx` — formatting toolbar (bold, italic, code, heading, link, checklist)
 - [ ] Wire editor into `NotepadApp` — content changes trigger debounced save
+- [ ] Update `src/app/page.tsx` to render `<NotepadApp />`
+- [ ] Update `src/app/layout.tsx` with Inter font and correct metadata (title: "Notepad")
+
+**Exit criteria**: App renders as a centered dark card with a working Tiptap editor. Markdown input rules work. Content persists across reloads.
+
+### Phase 3: Images + Storage
+
+**Owner**: Any agent (Phase 2 must be complete)
+
 - [ ] Implement image paste handling (base64 embed via Tiptap image extension)
 - [ ] Implement image drag-and-drop
 - [ ] Create `src/components/StorageWarning.tsx` — shown when localStorage > 4MB
+- [ ] Add footer with storage usage indicator and "Saved" status
 
-**Exit criteria**: Full markdown editing works. Images can be pasted and render inline. Content persists across reloads.
+**Exit criteria**: Images can be pasted/dropped and render inline. Storage usage is visible. Content persists.
 
 ### Phase 4: Polish
 
 **Owner**: Any agent (Phase 3 must be complete)
 
-- [ ] Create `src/hooks/useKeyboardShortcuts.ts` — global shortcuts (Cmd+N, Cmd+Backspace, etc.)
-- [ ] Add delete note functionality with confirmation dialog
-- [ ] Add mobile responsive sidebar (hamburger collapse at <768px)
+- [ ] Create `src/hooks/useKeyboardShortcuts.ts` — global shortcuts (Cmd+Shift+Backspace for clear all)
+- [ ] Add "clear all" functionality with confirmation dialog
 - [ ] Fine-tune all spacing, colors, hover states, transitions to match Linear aesthetic
-- [ ] Add welcome note on first load
+- [ ] Ensure responsive behavior (editor card stays readable on mobile)
 - [ ] Test all acceptance criteria from SPEC.md
 - [ ] Clean up any console.logs, unused imports, TODO comments
 
@@ -79,18 +75,20 @@ The project should be built in this order. Each phase should be fully complete (
 
 To prevent merge conflicts when multiple agents work in parallel (rare but possible):
 
-| Directory / File           | Modify Only During | Notes                                    |
-| -------------------------- | ------------------ | ---------------------------------------- |
-| `src/types/index.ts`       | Phase 1            | Append-only after Phase 1 (add fields, don't remove) |
-| `src/lib/*`                | Phase 1            | Stable API after Phase 1                 |
-| `src/hooks/*`              | Phase 1, 4         | Phase 4 adds keyboard shortcuts only     |
-| `src/components/Editor.tsx`| Phase 3            | Only editor agent touches this           |
-| `src/components/Toolbar.tsx`| Phase 3           | Only editor agent touches this           |
-| `src/components/Sidebar.tsx`| Phase 2, 4        | Phase 4 only for responsive tweaks       |
-| `src/app/globals.css`      | Phase 1, 4         | Phase 4 only for minor polish            |
-| `src/app/page.tsx`         | Phase 2            | One-time change, then stable             |
-| `src/app/layout.tsx`       | Phase 2            | One-time change, then stable             |
-| `package.json`             | Phase 1, 3         | Only to add dependencies                 |
+| Directory / File               | Modify Only During | Notes                                    |
+| ------------------------------ | ------------------ | ---------------------------------------- |
+| `src/types/index.ts`           | Phase 1            | Append-only after Phase 1                |
+| `src/lib/*`                    | Phase 1            | Stable API after Phase 1                 |
+| `src/hooks/useLocalStorage.ts` | Phase 1            | Stable after Phase 1                     |
+| `src/hooks/useKeyboardShortcuts.ts` | Phase 4       | Created in Phase 4 only                  |
+| `src/components/NotepadApp.tsx`| Phase 2, 3, 4      | Main wiring — extended in later phases   |
+| `src/components/Editor.tsx`    | Phase 2            | Only editor agent touches this           |
+| `src/components/Toolbar.tsx`   | Phase 2            | Only editor agent touches this           |
+| `src/components/StorageWarning.tsx` | Phase 3       | Created in Phase 3                       |
+| `src/app/globals.css`          | Phase 1, 4         | Phase 4 only for minor polish            |
+| `src/app/page.tsx`             | Phase 2            | One-time change, then stable             |
+| `src/app/layout.tsx`           | Phase 2            | One-time change, then stable             |
+| `package.json`                 | Phase 1            | Only to add dependencies                 |
 
 ---
 
@@ -124,12 +122,9 @@ To prevent merge conflicts when multiple agents work in parallel (rare but possi
 
 Only these packages should be added beyond what's already in `package.json`:
 
-```
-# Phase 1 — Icons
-bun add lucide-react
-
-# Phase 3 — Editor (if using Tiptap)
-bun add @tiptap/react @tiptap/starter-kit @tiptap/pm @tiptap/extension-image @tiptap/extension-placeholder @tiptap/extension-link @tiptap/extension-task-list @tiptap/extension-task-item @tiptap/extension-code-block-lowlight lowlight
+```bash
+# Phase 1 — All dependencies at once
+bun add lucide-react @tiptap/react @tiptap/starter-kit @tiptap/pm @tiptap/extension-image @tiptap/extension-placeholder @tiptap/extension-link @tiptap/extension-task-list @tiptap/extension-task-item @tiptap/extension-code-block-lowlight lowlight
 ```
 
 Do NOT add any other packages without explicit user approval. Keep the dependency tree minimal.
@@ -141,12 +136,13 @@ Do NOT add any other packages without explicit user approval. Keep the dependenc
 These rules must never be violated:
 
 1. **No backend.** Zero API routes, zero server actions, zero fetch calls. Everything is client-side + localStorage.
-2. **No external state libraries.** React hooks only (useState, useReducer, useMemo, useCallback, useEffect).
+2. **No external state libraries.** React hooks only (useState, useMemo, useCallback, useEffect).
 3. **No CSS-in-JS.** Tailwind CSS v4 utility classes only.
 4. **Single localStorage key** (`notepad_data`). Do not fragment data across multiple keys.
 5. **Dark theme only** for v1. No light mode toggle.
 6. **All components are TypeScript.** No `.js` or `.jsx` files.
 7. **`"use client"`** on every component that touches browser APIs. Server components only for `layout.tsx` and `page.tsx`.
+8. **Single writing surface.** No sidebar, no multi-note UI, no note list, no navigation.
 
 ---
 
