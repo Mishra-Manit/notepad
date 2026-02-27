@@ -22,13 +22,13 @@ The project should be built in this order. Each phase should be fully complete (
 
 **Owner**: First agent session
 
-- [ ] Set up `src/types/index.ts` with `NotepadData` interface
-- [ ] Create `src/lib/constants.ts` (localStorage key, size limits)
-- [ ] Create `src/lib/utils.ts` (date formatting helpers)
-- [ ] Create `src/lib/storage.ts` (localStorage read/write/size helpers)
-- [ ] Create `src/hooks/useLocalStorage.ts` (debounced persistence hook)
-- [ ] Update `src/app/globals.css` with the dark theme palette and Tailwind v4 tokens
-- [ ] Install required dependencies (`lucide-react`, Tiptap packages)
+- [x] Set up `src/types/index.ts` with `NotepadData` interface
+- [x] Create `src/lib/constants.ts` (localStorage key, size limits)
+- [x] Create `src/lib/utils.ts` (date formatting helpers)
+- [x] Create `src/lib/storage.ts` (localStorage read/write/size helpers)
+- [x] Create `src/hooks/useLocalStorage.ts` (debounced persistence hook)
+- [x] Update `src/app/globals.css` with the dark theme palette and Tailwind v4 tokens
+- [x] Install required dependencies (`lucide-react`, Tiptap packages)
 
 **Exit criteria**: Types compile, hooks are unit-testable, `globals.css` has correct theme tokens.
 
@@ -36,12 +36,12 @@ The project should be built in this order. Each phase should be fully complete (
 
 **Owner**: Any agent (Phase 1 must be complete)
 
-- [ ] Create `src/components/NotepadApp.tsx` — top-level client component, centered card layout, state wiring
-- [ ] Create `src/components/Editor.tsx` — Tiptap editor with markdown input rules
-- [ ] Create `src/components/Toolbar.tsx` — formatting toolbar (bold, italic, code, heading, link, checklist)
-- [ ] Wire editor into `NotepadApp` — content changes trigger debounced save
-- [ ] Update `src/app/page.tsx` to render `<NotepadApp />`
-- [ ] Update `src/app/layout.tsx` with Inter font and correct metadata (title: "Notepad")
+- [x] Create `src/components/NotepadApp.tsx` — top-level client component, centered card layout, state wiring
+- [x] Create `src/components/Editor.tsx` — Tiptap editor with markdown input rules
+- [x] ~~Create `src/components/Toolbar.tsx`~~ — Skipped per SPEC.md: "No toolbar, no status/footer UI"
+- [x] Wire editor into `NotepadApp` — content changes trigger debounced save
+- [x] Update `src/app/page.tsx` to render `<NotepadApp />`
+- [x] Update `src/app/layout.tsx` with Inter font and correct metadata (title: "Notepad")
 
 **Exit criteria**: App renders as a centered dark card with a working Tiptap editor. Markdown input rules work. Content persists across reloads.
 
@@ -49,10 +49,10 @@ The project should be built in this order. Each phase should be fully complete (
 
 **Owner**: Any agent (Phase 2 must be complete)
 
-- [ ] Implement image paste handling (base64 embed via Tiptap image extension)
-- [ ] Implement image drag-and-drop
-- [ ] Create `src/components/StorageWarning.tsx` — shown when localStorage > 4MB
-- [ ] Add footer with storage usage indicator and "Saved" status
+- [x] Implement image paste handling (base64 embed via Tiptap image extension)
+- [x] Implement image drag-and-drop
+- [x] Create `src/components/StorageWarning.tsx` — shown when localStorage > 4MB
+- [x] Add footer with storage usage indicator and "Saved" status
 
 **Exit criteria**: Images can be pasted/dropped and render inline. Storage usage is visible. Content persists.
 
@@ -60,12 +60,12 @@ The project should be built in this order. Each phase should be fully complete (
 
 **Owner**: Any agent (Phase 3 must be complete)
 
-- [ ] Create `src/hooks/useKeyboardShortcuts.ts` — global shortcuts (Cmd+Shift+Backspace for clear all)
-- [ ] Add "clear all" functionality with confirmation dialog
-- [ ] Fine-tune all spacing, colors, hover states, transitions to match Linear aesthetic
-- [ ] Ensure responsive behavior (editor card stays readable on mobile)
-- [ ] Test all acceptance criteria from SPEC.md
-- [ ] Clean up any console.logs, unused imports, TODO comments
+- [x] Create `src/hooks/useKeyboardShortcuts.ts` — global shortcuts (Cmd+Shift+Backspace for clear all)
+- [x] Add "clear all" functionality with confirmation dialog
+- [x] Fine-tune all spacing, colors, hover states, transitions to match Linear aesthetic
+- [x] Ensure responsive behavior (editor card stays readable on mobile)
+- [x] Test all acceptance criteria from SPEC.md
+- [x] Clean up any console.logs, unused imports, TODO comments
 
 **Exit criteria**: All acceptance criteria in SPEC.md pass. App looks polished.
 
@@ -162,4 +162,4 @@ Track any files created that aren't in the original SPEC.md component architectu
 
 | File | Phase | Reason |
 | ---- | ----- | ------ |
-| *(none yet)* | | |
+| src/app/icon.svg | Phase 2 | Replaces default favicon with custom SVG icon |

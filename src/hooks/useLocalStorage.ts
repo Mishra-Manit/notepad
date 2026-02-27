@@ -1,21 +1,43 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useSyncExternalStore } from "react";
 
 import { DEBOUNCE_MS } from "@/lib/constants";
 import { readStorage, writeStorage } from "@/lib/storage";
 import type { NotepadData } from "@/types";
 
-export function useLocalStorage() {
-  const [data, setData] = useState<NotepadData | null>(null);
-  const [loaded, setLoaded] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+let cachedData: NotepadData | null = null;
+let listeners: Array<() => void> = [];
 
-  useEffect(() => {
-    const stored = readStorage();
-    setData(stored);
-    setLoaded(true);
-  }, []);
+function subscribe(listener: () => void) {
+  listeners = [...listeners, listener];
+  return () => {
+    listeners = listeners.filter((l) => l !== listener);
+  };
+}
+
+function getSnapshot(): NotepadData | null {
+  if (cachedData === null && typeof window !== "undefined") {
+    cachedData = readStorage();
+  }
+  return cachedData;
+}
+
+function getServerSnapshot(): NotepadData | null {
+  return null;
+}
+
+function emitChange(next: NotepadData) {
+  cachedData = next;
+  for (const listener of listeners) {
+    listener();
+  }
+}
+
+export function useLocalStorage() {
+  const data = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const loaded = typeof window !== "undefined";
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const save = useCallback((content: string) => {
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -26,7 +48,7 @@ export function useLocalStorage() {
         updatedAt: new Date().toISOString(),
       };
       const success = writeStorage(updated);
-      if (success) setData(updated);
+      if (success) emitChange(updated);
     }, DEBOUNCE_MS);
   }, []);
 
