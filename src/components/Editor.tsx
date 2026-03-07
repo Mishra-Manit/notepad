@@ -51,6 +51,9 @@ export function Editor({ content, onUpdate, onEditorReady }: EditorProps) {
       attributes: {
         class: "tiptap",
       },
+      clipboardTextSerializer: (slice) => {
+        return slice.content.textBetween(0, slice.content.size, "\n");
+      },
       handleDrop(view, event) {
         const files = event.dataTransfer?.files;
         if (!files || files.length === 0) return false;

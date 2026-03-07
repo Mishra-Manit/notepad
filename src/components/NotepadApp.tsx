@@ -22,7 +22,7 @@ export function NotepadApp() {
       save(html);
       setStorageSize(getStorageSizeBytes());
       if (editor) {
-        setCharCount(editor.getText().length);
+        setCharCount(editor.getText({ blockSeparator: '' }).length);
       }
     },
     [save, editor]
@@ -32,7 +32,7 @@ export function NotepadApp() {
     setEditor(e);
     setStorageSize(getStorageSizeBytes());
     if (e) {
-      setCharCount(e.getText().length);
+      setCharCount(e.getText({ blockSeparator: '' }).length);
     }
   }, []);
 
