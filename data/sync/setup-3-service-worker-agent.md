@@ -74,7 +74,7 @@ Never edit files in the original service directory.
 
 Before making any changes:
 
-1. Read the files most likely to be affected
+1. Use an explore subagent to read the files most likely to be affected
 2. Understand existing patterns — how are similar things done in this codebase?
 3. Look for existing types, utilities, or helpers you should reuse
 

@@ -147,3 +147,4 @@ Print the PR URL when done.
 - **Prefixes:** `feat:` new capability / `fix:` bug fix / `refactor:` no behavior change / `chore:` config or deps
 - **Never commit to main** — all work happens on feature branches in isolated worktrees
 - **Never open a PR without explicit user approval**
+- **Always link the Jira ticket in the PR body** — include the full ticket URL under `## Jira`
