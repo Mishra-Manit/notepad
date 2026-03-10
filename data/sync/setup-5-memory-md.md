@@ -55,15 +55,3 @@ Recurring patterns discovered across multiple tickets.
 [Add entries as you notice them. Example:]
 - [e.g. Auth errors in service-a are almost always a missing `Authorization: Bearer` prefix — check headers first]
 - [e.g. service-b's queue workers need a restart after config changes — not automatic]
-
----
-
-## Contacts
-
-People to know for PR reviews or questions.
-
-| Name | Role | When to involve |
-|------|------|-----------------|
-| [Name] | [Team lead / Senior engineer] | [e.g. Any changes to the auth middleware] |
-| [Name] | [DBA / Data engineer] | [e.g. Any schema migrations] |
-```

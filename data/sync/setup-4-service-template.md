@@ -112,13 +112,3 @@ Before any PR is opened on this service, verify:
 - [ ] [Any service-specific check, e.g. "API contract changes are reflected in the shared types package"]
 
 ---
-
-## Tips for Filling This Out
-
-**Overview:** If someone joined the team today, what's the first thing you'd tell them about this service? That is what goes here.
-
-**Non-Obvious Patterns:** Think about the last bug caused by a misunderstanding of the codebase. Whatever caused it — put it here.
-
-**PR Checklist:** Think about the last PR that needed an extra round of review to fix something obvious. Add that check here.
-
-**Key Files:** You do not need to list every file. Only the ones that are non-obvious or that Claude is likely to need to find quickly.
