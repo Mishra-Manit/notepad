@@ -13,7 +13,7 @@ description: >
   Runs git diff, checks for security vulnerabilities, code quality issues,
   and correctness problems. Returns a verdict: approve, warn, or block.
 tools: Read, Grep, Glob, Bash
-model: sonnet
+model: opus
 ```
 
 # Code Reviewer Agent

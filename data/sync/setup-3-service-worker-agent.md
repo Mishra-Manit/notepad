@@ -13,6 +13,7 @@ description: >
   Given a ticket ID, service path, and list of required changes — reads the
   service's CLAUDE.md, creates an isolated git worktree, implements and commits
   the changes, runs tests, and returns a full summary. Does not open PRs.
+model: opus
 allowed-tools: ["Bash", "Read", "Write", "Edit", "Glob", "Grep"]
 ```
 
