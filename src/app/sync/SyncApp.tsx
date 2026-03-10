@@ -131,7 +131,7 @@ function CopyMarkdownButton({ content }: { content: string }) {
         "flex items-center gap-1.5 px-2.5 py-1 rounded font-mono text-[10px] transition-colors duration-200",
         copied
           ? "copy-btn-success bg-accent/20 text-accent border border-accent/40"
-          : "bg-surface border border-border text-foreground/40 hover:text-foreground/80 hover:border-border-hover",
+          : "bg-surface border border-border text-foreground/70 hover:text-foreground/90 hover:border-border-hover",
       ].join(" ")}
     >
       {copied ? <Check size={10} strokeWidth={2.5} /> : <Copy size={10} />}
@@ -269,12 +269,12 @@ export function SyncApp({ files }: SyncAppProps) {
                 {frontmatter && (
                   <div className="mb-8">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className="font-mono text-[9px] tracking-[0.18em] text-foreground/30 uppercase">
+                      <span className="font-mono text-[9px] tracking-[0.18em] text-foreground/70 uppercase">
                         Frontmatter
                       </span>
                       <div className="flex-1 h-px bg-border" />
                     </div>
-                    <div className="opacity-60">
+                    <div className="opacity-80">
                       <MarkdownViewer content={frontmatter} />
                     </div>
                   </div>
@@ -282,7 +282,7 @@ export function SyncApp({ files }: SyncAppProps) {
 
                 {/* Content section header */}
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="font-mono text-[9px] tracking-[0.18em] text-foreground/30 uppercase">
+                  <span className="font-mono text-[9px] tracking-[0.18em] text-foreground/70 uppercase">
                     Content
                   </span>
                   <div className="flex-1 h-px bg-border" />
