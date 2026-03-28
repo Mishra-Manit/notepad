@@ -8,7 +8,10 @@ interface ShortcutOptions {
   onClearAll: () => void;
 }
 
-export function useKeyboardShortcuts({ editor, onClearAll }: ShortcutOptions) {
+export function useKeyboardShortcuts({
+  editor,
+  onClearAll,
+}: ShortcutOptions) {
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       const mod = e.metaKey || e.ctrlKey;
