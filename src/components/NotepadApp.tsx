@@ -5,52 +5,74 @@ import type { Editor as TiptapEditor } from "@tiptap/react";
 
 import { Editor } from "@/components/Editor";
 import { StorageWarning } from "@/components/StorageWarning";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { TabBar } from "@/components/TabBar";
+import { useNotepads } from "@/hooks/useNotepads";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
-import { clearStorage, getStorageSizeBytes } from "@/lib/storage";
-import { STORAGE_WARNING_BYTES } from "@/lib/constants";
+import { NOTEPADS_KEY, STORAGE_WARNING_BYTES } from "@/lib/constants";
 
 export function NotepadApp() {
-  const { data, loaded, save } = useLocalStorage();
+  const {
+    tabs,
+    activeId,
+    contents,
+    renamingId,
+    loaded,
+    saveContent,
+    selectTab,
+    addTab,
+    deleteTab,
+    renameTab,
+    clearActiveTab,
+  } = useNotepads();
+
   const [editor, setEditor] = useState<TiptapEditor | null>(null);
   const [showClearDialog, setShowClearDialog] = useState(false);
   const [storageSize, setStorageSize] = useState(0);
   const [charCount, setCharCount] = useState(0);
 
+  const updateSize = useCallback(() => {
+    if (typeof window !== "undefined") {
+      setStorageSize(
+        new Blob([localStorage.getItem(NOTEPADS_KEY) ?? ""]).size
+      );
+    }
+  }, []);
+
   const handleUpdate = useCallback(
     (html: string) => {
-      save(html);
-      setStorageSize(getStorageSizeBytes());
+      saveContent(html);
+      updateSize();
       if (editor) {
-        setCharCount(editor.getText({ blockSeparator: '' }).length);
+        setCharCount(editor.getText({ blockSeparator: "" }).length);
       }
     },
-    [save, editor]
+    [saveContent, updateSize, editor]
   );
 
-  const handleEditorReady = useCallback((e: TiptapEditor | null) => {
-    setEditor(e);
-    setStorageSize(getStorageSizeBytes());
-    if (e) {
-      setCharCount(e.getText({ blockSeparator: '' }).length);
-    }
-  }, []);
+  const handleEditorReady = useCallback(
+    (e: TiptapEditor | null) => {
+      setEditor(e);
+      updateSize();
+      if (e) {
+        setCharCount(e.getText({ blockSeparator: "" }).length);
+      }
+    },
+    [updateSize]
+  );
 
-  const handleClearAll = useCallback(() => {
-    setShowClearDialog(true);
-  }, []);
+  const handleClearAll = useCallback(() => setShowClearDialog(true), []);
 
   const confirmClear = useCallback(() => {
-    clearStorage();
-    if (editor) {
-      editor.commands.clearContent();
-    }
+    clearActiveTab();
+    if (editor) editor.commands.clearContent();
     setShowClearDialog(false);
     setStorageSize(0);
     setCharCount(0);
-  }, [editor]);
+  }, [clearActiveTab, editor]);
 
   useKeyboardShortcuts({ editor, onClearAll: handleClearAll });
+
+  const activeLabel = tabs.find((t) => t.id === activeId)?.label ?? "";
 
   if (!loaded) {
     return (
@@ -62,22 +84,29 @@ export function NotepadApp() {
 
   return (
     <div className="relative flex min-h-screen flex-col items-center bg-background px-4 py-12 sm:py-16 md:py-20">
+      {/* Tab bar */}
+      <div className="w-full max-w-[55rem]">
+        <TabBar
+          tabs={tabs}
+          activeId={activeId}
+          renamingId={renamingId}
+          onSelect={selectTab}
+          onAdd={addTab}
+          onDelete={deleteTab}
+          onRename={renameTab}
+        />
+      </div>
+
       {/* Editor card */}
       <div
         className="w-full max-w-[55rem] rounded-lg border border-border bg-surface
           shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_4px_24px_rgba(0,0,0,0.4)]
           transition-shadow duration-150"
       >
-        <div
-          className="px-6 py-8 sm:px-8 sm:py-10 cursor-text"
-          onClick={(e) => {
-            if (e.target === e.currentTarget && editor) {
-              editor.commands.focus("end");
-            }
-          }}
-        >
+        <div className="px-6 py-8 sm:px-8 sm:py-10">
           <Editor
-            content={data?.content ?? ""}
+            key={activeId}
+            content={contents[activeId] ?? ""}
             onUpdate={handleUpdate}
             onEditorReady={handleEditorReady}
           />
@@ -88,7 +117,9 @@ export function NotepadApp() {
       <div className="mt-4 flex items-center gap-3 text-xs text-muted">
         <span>{charCount.toLocaleString()} chars</span>
         <span className="text-border-hover">·</span>
-        <span className="text-muted/70">{charCount > 0 ? "Saved" : "Ready to save"}</span>
+        <span className="text-muted/70">
+          {charCount > 0 ? "Saved" : "Ready to save"}
+        </span>
       </div>
 
       {/* Storage warning */}
@@ -96,7 +127,7 @@ export function NotepadApp() {
         <StorageWarning sizeBytes={storageSize} />
       )}
 
-      {/* Clear all confirmation dialog */}
+      {/* Clear confirmation dialog */}
       {showClearDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div
@@ -104,10 +135,10 @@ export function NotepadApp() {
               p-6 shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
           >
             <h2 className="text-base font-semibold text-foreground">
-              Clear everything?
+              Clear {activeLabel}?
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              This will permanently delete all your notes and images. This
+              This will permanently delete all content in this tab. This
               action cannot be undone.
             </p>
             <div className="mt-5 flex justify-end gap-3">
@@ -123,7 +154,7 @@ export function NotepadApp() {
                 className="rounded-md bg-red-600/90 px-4 py-2 text-sm font-medium
                   text-white transition-colors duration-150 hover:bg-red-600"
               >
-                Clear all
+                Clear tab
               </button>
             </div>
           </div>

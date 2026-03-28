@@ -213,7 +213,7 @@ export function SyncApp({ files }: SyncAppProps) {
               >
                 <div className="flex items-center gap-1.5 mb-1.5">
                   <span className="font-mono text-[10px] text-accent/50 select-none">
-                    //
+                    {"//"}
                   </span>
                   <span
                     className={`font-mono text-[11px] truncate ${

@@ -1,6 +1,6 @@
-export interface NotepadData {
-  content: string;
-  updatedAt: string;
+export interface Tab {
+  id: string;
+  label: string;
 }
 
 export interface SyncFile {
